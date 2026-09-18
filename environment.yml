@@ -1,0 +1,9 @@
+name: VECTOR_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas=2.1.0
+  - matplotlib=3.8.0
+  - numpy=1.26.0
