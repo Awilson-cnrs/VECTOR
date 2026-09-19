@@ -4,6 +4,7 @@ VECTOR_env/
 
 # Jupyter
 .ipynb_checkpoints/
+.jupyter/desktop-workspaces
 
 # Spyder
 .spyderproject/
