@@ -1,0 +1,9 @@
+# Conda
+envs/
+VECTOR_env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Spyder
+.spyderproject/
