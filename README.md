@@ -2,56 +2,28 @@
 
 A Python 3.12 project for data analysis and visualization, designed to run in **Spyder** or **JupyterLab** with isolated Conda environments.
 
----
-
-## 📦 Project Structure
-
-
-
-
-VECTOR/
-├── VECTORtools/          # Local Python package
-│   ├── init.py       # Required for package imports
-│   └── ...              # Other modules (e.g., tools.py)
-├── notebooks/            # JupyterLab notebooks
-├── scripts/              # Spyder-compatible scripts
-├── environment.yml       # Conda environment definition
-└── README.md             # This file
-text
-Copier
-
----
-
 ## 🚀 Setup Instructions
 
 ### 1️⃣ Clone the Repository
-```bash
+```
 git clone https://github.com/Awilson-cnrs/VECTOR.git
 cd VECTOR
+```
 
-
-
-
-2️⃣ Create the Conda Environment
+### 2️⃣ Create a ```VECTOR_env``` conda virtual environment
 The project requires Python 3.12 and specific dependencies. Run:
-bash
-Copier
 
+```
 conda env create -f environment.yml
 conda activate VECTOR_env
+```
 
 
 
-
-For JupyterLab Users:
-Install the environment as a Jupyter kernel to use it in notebooks:
-bash
-Copier
-
+For Jupyter Notebook Users: install the Jupyter kernel in ```VECTOR_env``` virtual environment:
+```
 python -m ipykernel install --user --name=VECTOR_env
-
-
-
+```
 
 For Spyder Users:
 Open Spyder after activating the environment (conda activate VECTOR_env).
