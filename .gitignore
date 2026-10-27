@@ -27,3 +27,6 @@ notebooks/.jupyter/desktop-workspaces/
 
 # Spyder
 .spyderproject/
+
+# Junie agent sessions
+.junie/
