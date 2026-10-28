@@ -4,25 +4,42 @@ from pathlib import Path
 def validate_sample(sample, data_path):
     """Check if a sample's GDS/OPC/GC files exist before running.
     
+    This is useful for batch processing — check which samples have data
+    available before attempting to plot or analyze.
+    
     Args:
         sample: Sample key from sampleDict
-        data_path: Path to the data directory
+        data_path: Path to the data directory (e.g. Z:/RawData/TestCata)
         
     Returns:
-        True if all required files exist, False otherwise
+        A tuple (is_valid, message):
+            - is_valid: True if all required files exist
+            - message: Empty string if valid, otherwise describes what's missing
     """
     if sample not in sampleDict:
-        return False
+        available = ', '.join(sorted(sampleDict.keys()))
+        return False, f"Sample '{sample}' not found. Available: {available}"
     
     entry = sampleDict[sample]
     required = ['GDS', 'OPC', 'GC']
+    
+    # Check required config keys
+    missing_keys = [k for k in required if k not in entry]
+    if missing_keys:
+        return False, f"Sample '{sample}' missing config keys: {missing_keys}"
+    
+    # Check files exist
+    missing_files = []
     for key in required:
-        if key not in entry:
-            return False
         file_path = Path(data_path) / entry[key]
         if not file_path.exists():
-            return False
-    return True
+            missing_files.append(f"  {key}: {file_path}")
+    
+    if missing_files:
+        msg = f"Sample '{sample}' — missing files:\n" + "\n".join(missing_files)
+        return False, msg
+    
+    return True, ""
 
 
 sampleDict = {

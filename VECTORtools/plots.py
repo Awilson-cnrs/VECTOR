@@ -8,6 +8,14 @@ from .samples import sampleDict
 
 
 def OverviewPlot(sample, cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
+    """Plot an overview of a single sample: temperature, gas concentrations, and flows."""
+    if sample not in sampleDict:
+        available = ', '.join(sorted(sampleDict.keys()))
+        raise KeyError(
+            f"Sample '{sample}' not found in sampleDict.\n"
+            f"Available samples: {available}"
+        )
+    
     df = mergeOnGDS(cataFolder, sampleDict[sample])
     fig, axs = plt.subplots(3, 1, sharex=True)  # this plots the three plots together, with shared x axis!!
 
@@ -47,6 +55,25 @@ def OverviewPlot(sample, cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
 
 
 def triPlot(samples, vlines=False, cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
+    """Compare multiple samples: CO2 conversion, CH4 selectivity, and CO selectivity."""
+    # --- Validate all samples exist ---
+    missing_samples = [s for s in samples if s not in sampleDict]
+    if missing_samples:
+        available = ', '.join(sorted(sampleDict.keys()))
+        raise KeyError(
+            f"Sample(s) not found in sampleDict: {missing_samples}\n"
+            f"Available samples: {available}"
+        )
+    
+    # --- Validate TPrange is present for all samples ---
+    for sample in samples:
+        if 'TPrange' not in sampleDict[sample]:
+            raise ValueError(
+                f"Sample '{sample}' is missing 'TPrange' in sampleDict.\n"
+                "TPrange is required for triPlot — it defines the time range to extract.\n"
+                "Add 'TPrange': [start, end, offset] to the sample configuration."
+            )
+
     fig, axs = plt.subplots(3, 1, sharex=True, figsize=(7, 4))
 
     for sample in samples:
@@ -93,6 +120,22 @@ def triPlot(samples, vlines=False, cataFolder=DEFAULT_DATA_PATH, sampleDict=samp
 
 
 def tempPlot(samples, cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
+    """Plot temperature curves for multiple samples."""
+    missing_samples = [s for s in samples if s not in sampleDict]
+    if missing_samples:
+        available = ', '.join(sorted(sampleDict.keys()))
+        raise KeyError(
+            f"Sample(s) not found in sampleDict: {missing_samples}\n"
+            f"Available samples: {available}"
+        )
+    
+    for sample in samples:
+        if 'TPrange' not in sampleDict[sample]:
+            raise ValueError(
+                f"Sample '{sample}' is missing 'TPrange' in sampleDict.\n"
+                "TPrange is required for tempPlot."
+            )
+
     for sample in samples:
         df = mergeOnGC(cataFolder, sampleDict[sample]).iloc[sampleDict[sample]['TPrange'][0]:sampleDict[sample]['TPrange'][1]]
         df.index = df.index - df.index[0] + sampleDict[sample]['TPrange'][2]
@@ -108,6 +151,20 @@ def tempPlot(samples, cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
 
 
 def tweakTimeOffset(sample, tweak, sampleRef='DR60-26', cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
+    """Compare temperature timing between a sample and a reference sample."""
+    if sample not in sampleDict:
+        available = ', '.join(sorted(sampleDict.keys()))
+        raise KeyError(
+            f"Sample '{sample}' not found in sampleDict.\n"
+            f"Available samples: {available}"
+        )
+    if sampleRef not in sampleDict:
+        available = ', '.join(sorted(sampleDict.keys()))
+        raise KeyError(
+            f"Reference sample '{sampleRef}' not found in sampleDict.\n"
+            f"Available samples: {available}"
+        )
+
     df = mergeOnGC(cataFolder, sampleDict[sampleRef]).iloc[sampleDict[sampleRef]['TPrange'][0]:sampleDict[sampleRef]['TPrange'][1]]
     df.index = df.index - df.index[0]
     plt.plot(df['Temperature'].loc[5:7], label='ref')
@@ -126,6 +183,19 @@ def tweakTimeOffset(sample, tweak, sampleRef='DR60-26', cataFolder=DEFAULT_DATA_
 
 
 def carbonBalance(sample, cataFolder=DEFAULT_DATA_PATH, sampleDict=sampleDict):
+    """Plot gas concentrations and carbon balance for a single sample."""
+    if sample not in sampleDict:
+        available = ', '.join(sorted(sampleDict.keys()))
+        raise KeyError(
+            f"Sample '{sample}' not found in sampleDict.\n"
+            f"Available samples: {available}"
+        )
+    if 'TPrange' not in sampleDict[sample]:
+        raise ValueError(
+            f"Sample '{sample}' is missing 'TPrange' in sampleDict.\n"
+            "TPrange is required for carbonBalance."
+        )
+
     df = mergeOnGC(cataFolder, sampleDict[sample]).iloc[
         sampleDict[sample]['TPrange'][0]:sampleDict[sample]['TPrange'][1]
     ]
